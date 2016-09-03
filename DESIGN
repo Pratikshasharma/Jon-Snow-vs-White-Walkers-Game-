@@ -1,0 +1,20 @@
+Pratiksha Sharma
+ps179
+
+Genre: 2-D Scrolling Platformer
+Name: The White Walkers
+Brief Story: 
+The White Walkers have crossed the Great Wall in the North and are attacking
+the capital, Kings Landing. Jon Snow needs to kill the White walkers and 
+save the iron throne.
+Goal: 
+The player needs to shoot the White Walkers (enemies) that approach him and get to the iron throne. 
+In the first level, there are no obstacles for the player to aim at the white walkers.
+In the second level, there are blocks that move up and down and hinder the player.
+To win the first level, the player needs to kill the white walkers, and make his way to the Throne
+at the end of the screen. If a white walker touches the Player, the Player will turn into 
+one of them and join the Army of the Dead. The player needs to finish the second level to win
+the game. 10 points will be awarded per white walker that was killed and the total score will be tallied.
+
+
+
