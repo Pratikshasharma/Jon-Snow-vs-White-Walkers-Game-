@@ -1,19 +1,12 @@
 
-import java.awt.Button;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 public class Main extends Application {
-    public static final int WIDTH = 1000;
-    public static final int HEIGHT = 639;
-    public static final int FRAMES_PER_SECOND = 60;
-    private static final int MILLISECOND_DELAY = 1000 / FRAMES_PER_SECOND;
-    private static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
-
+	public static final int WIDTH = 1200;
+	public static final int HEIGHT = 749;
+	
     /**
      * Set things up at the beginning.
      */
@@ -22,23 +15,10 @@ public class Main extends Application {
     public void start (Stage stage) {
         // create your own game here
         myGame = new Game();
-        stage.setTitle(myGame.getTitle());
-        
-        // attach game to the stage and display it
-        Scene scene = myGame.init(WIDTH, HEIGHT);
+        stage.setTitle(myGame.getTitle());    
+        Scene scene = myGame.init();
         stage.setScene(scene);
         stage.show();
-        
-        Button startButton = new Button("START");
-        Button exitButton = new Button("EXIT");
-        //startButton = startButton.stage;
-        
-        // sets the game's loop
-        KeyFrame frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY),e -> myGame.step(SECOND_DELAY));
-        Timeline animation = new Timeline();
-        animation.setCycleCount(Timeline.INDEFINITE);
-        animation.getKeyFrames().add(frame);
-        animation.play();
     }
 
     /**
