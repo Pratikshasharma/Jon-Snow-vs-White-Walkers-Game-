@@ -77,7 +77,7 @@ on the Level of the game. For example, blocks need to be added to the root of th
 This makes keeps the code cleaner and more readable. Also, there is no point in adding functions in a super class that one or two of
 the subclasses might not use.
 
-I chose not to make Sprite class but separate Enemy, Player and SnowBall classes, because these objects do not share any behaviours in common.
+I chose not to make Sprite class but separate Enemy, Player and SnowBall classes, because these objects do not share any behaviors in common.
 The setup of Enemy, Player and SnowBall classes are similar (all of them contain ImageView attributes) and thus might
 seem like duplication of code, however, they all have ImageView attributes created from different images. 
 
