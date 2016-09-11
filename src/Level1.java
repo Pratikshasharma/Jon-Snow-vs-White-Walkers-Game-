@@ -3,7 +3,7 @@ import javafx.scene.Group;
 /**
  * Separates functions needed in Level 1 in the game
  * Dependencies: LevelController Super Class 
- * Assumption: Assumes createSceneNodes() and updateLevel() abstract methods created in Level Clas 
+ * Assumption: Assumes createSceneNodes() and updateLevel() abstract methods created in Level Class
  *@author Pratiksha Sharma
  */
 
