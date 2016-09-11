@@ -176,26 +176,26 @@ public abstract class LevelController {
 				myPlayer.getImageView().setX(
 						myPlayer.getImageView().getX() + PLAYER_SPEED);
 				mySnowBall.getImageView().setX(
-						mySnowBall.getImageView().getX() + PLAYER_SPEED);
-				break;
+						mySnowBall.getImageView().getX() + PLAYER_SPEED);		
 			}
+			break;
 
 		case LEFT:
 			if (myPlayer.getImageView().getX() > 0) {
 				myPlayer.getImageView().setX(
 						myPlayer.getImageView().getX() - PLAYER_SPEED);
 				mySnowBall.getImageView().setX(
-						mySnowBall.getImageView().getX() - PLAYER_SPEED);
-				break;
+						mySnowBall.getImageView().getX() - PLAYER_SPEED);	
 			}
+			break;
 		case UP:
 			if (myPlayer.getImageView().getY() > 0) {
 				myPlayer.getImageView().setY(
 						myPlayer.getImageView().getY() - PLAYER_SPEED);
 				mySnowBall.getImageView().setY(
 						mySnowBall.getImageView().getY() - PLAYER_SPEED);
-				break;
 			}
+			break;
 		case DOWN:
 			if (myPlayer.getImageView().getY() <= Game.HEIGHT
 					- myPlayer.getImageView().getBoundsInLocal().getHeight()
@@ -204,22 +204,21 @@ public abstract class LevelController {
 						myPlayer.getImageView().getY() + PLAYER_SPEED);
 				mySnowBall.getImageView().setY(
 						mySnowBall.getImageView().getY() + PLAYER_SPEED);
-				break;
+
 			}
+			break;
 
 		case C:
-			if (myPlayer.getImageView().getY() <= Game.HEIGHT
-					- myPlayer.getImageView().getBoundsInLocal().getHeight()
-					- 70) {
+				System.out.println("WHY GOES HERE???");
 				for (Enemy myCheatEnemy : myEnemyList) {
 					playMusic("HIT.mp3");
 					removeDeadEnemyFromScreen(myCheatEnemy);
 					myScoreBoard.updateScoreBoard();
 					displayScoreBoard(true);
 					myEnemyList.remove(myCheatEnemy);
-					break;
-				}
+				break;
 			}
+				break;
 		default:
 			// do nothing
 		}
@@ -227,7 +226,6 @@ public abstract class LevelController {
 
 	/**
 	 * Displays the Scoreboard
-	 * 
 	 * @param deleteScoreBoardNodes
 	 *            boolean to delete ScoreBoard nodes if already in the root
 	 */
@@ -305,11 +303,7 @@ public abstract class LevelController {
 
 	private boolean checkBallEnemyCollision(Enemy myTempEnemy) {
 		if ((!myTempEnemy.isDead())
-				&& myTempEnemy
-						.getImageView()
-						.getBoundsInParent()
-						.intersects(
-								mySnowBall.getImageView().getBoundsInParent())) {
+				&& (myTempEnemy.getImageView().getBoundsInParent().intersects(mySnowBall.getImageView().getBoundsInParent()))) {
 			removeDeadEnemyFromScreen(myTempEnemy);
 			myScoreBoard.updateScoreBoard();
 			mySnowBall.getImageView().setVisible(false);
