@@ -120,7 +120,7 @@ public abstract class LevelController {
 		for (Enemy tempEnemy : myEnemyList) {
 			tempEnemy.getImageView().setX(
 					tempEnemy.getImageView().getX() - 1 * 2 * ENEMY_SPEED
-							* Game.SECOND_DELAY);
+					* Game.SECOND_DELAY);
 			if (checkBallEnemyCollision(tempEnemy)) {
 				myEnemyList.remove(tempEnemy);
 				playMusic("HIT.mp3");
@@ -172,7 +172,7 @@ public abstract class LevelController {
 			break;
 		case RIGHT:
 			if (myPlayer.getImageView().getX() <= Game.WIDTH
-					- myPlayer.getImageView().getBoundsInLocal().getWidth()) {
+			- myPlayer.getImageView().getBoundsInLocal().getWidth()) {
 				myPlayer.getImageView().setX(
 						myPlayer.getImageView().getX() + PLAYER_SPEED);
 				mySnowBall.getImageView().setX(
@@ -198,8 +198,8 @@ public abstract class LevelController {
 			break;
 		case DOWN:
 			if (myPlayer.getImageView().getY() <= Game.HEIGHT
-					- myPlayer.getImageView().getBoundsInLocal().getHeight()
-					- 80) {
+			- myPlayer.getImageView().getBoundsInLocal().getHeight()
+			- 80) {
 				myPlayer.getImageView().setY(
 						myPlayer.getImageView().getY() + PLAYER_SPEED);
 				mySnowBall.getImageView().setY(
@@ -209,16 +209,15 @@ public abstract class LevelController {
 			break;
 
 		case C:
-				System.out.println("WHY GOES HERE???");
-				for (Enemy myCheatEnemy : myEnemyList) {
-					playMusic("HIT.mp3");
-					removeDeadEnemyFromScreen(myCheatEnemy);
-					myScoreBoard.updateScoreBoard();
-					displayScoreBoard(true);
-					myEnemyList.remove(myCheatEnemy);
+			for (Enemy myCheatEnemy : myEnemyList) {
+				playMusic("HIT.mp3");
+				removeDeadEnemyFromScreen(myCheatEnemy);
+				myScoreBoard.updateScoreBoard();
+				displayScoreBoard(true);
+				myEnemyList.remove(myCheatEnemy);
 				break;
 			}
-				break;
+			break;
 		default:
 			// do nothing
 		}
@@ -317,9 +316,9 @@ public abstract class LevelController {
 		if ((!myTempEnemy.isDead())
 				&& (!myPlayer.isDead())
 				&& myTempEnemy
-						.getImageView()
-						.getBoundsInParent()
-						.intersects(myPlayer.getImageView().getBoundsInParent())) {
+				.getImageView()
+				.getBoundsInParent()
+				.intersects(myPlayer.getImageView().getBoundsInParent())) {
 			myPlayer.setDead(true);
 			myPlayer.getImageView().setVisible(false);
 			mySnowBall.getImageView().setVisible(false);
@@ -336,9 +335,12 @@ public abstract class LevelController {
 	 */
 
 	protected void playMusic(String myFile) {
-		Media sound = new Media(new File(myFile).toURI().toString());
-		MediaPlayer mediaPlayer = new MediaPlayer(sound);
-		mediaPlayer.play();
+		File newfile = new File(myFile);
+		if (newfile.exists()){
+			Media sound = new Media(newfile.toURI().toString());
+			MediaPlayer mediaPlayer = new MediaPlayer(sound);
+			mediaPlayer.play();	
+		}
 	}
 
 	/**
