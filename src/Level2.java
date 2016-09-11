@@ -1,69 +1,89 @@
 
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Level2 extends Levels{
+import javafx.scene.Group;
 
-	private int BLOCK_DIRECTION = 1;
-	private Rectangle myLeftBlock;
-	private Rectangle myRightBlock;
-	private int BLOCK_SPEED = 30;
-	
-	// Create a New Player??
-	
-	public void createBlockNode(){
-		// Starts from the Bottom 
-		myLeftBlock = new Rectangle( Main.WIDTH * 0.5, Main.HEIGHT - 50, 20, 20);
-		myLeftBlock.setFill(Color.RED);
-		// Starts from the Top
-		myRightBlock = new Rectangle( Main.WIDTH * 0.6,10, 20, 20);
-		myRightBlock.setFill(Color.RED);
+/**
+ * separate functions needed in Level 2 of the game
+ * @author Pratiksha Sharma
+ *Dependencies: LevelController Super Class, Obstacle Class 
+ *Assumption: Assumes createSceneNodes() and updateLevel() abstract methods created in Level Class
+ */
+public class Level2 extends LevelController {
+	private Obstacle myObstacle;
+	private List<Obstacle> myBlockList = new ArrayList<Obstacle>();
+	public static  int BLOCK_DIRECTION = 1;
+	public static final int BLOCK_SPEED = 80;
 
-		
-		root.getChildren().add(myLeftBlock);
-		root.getChildren().add(myRightBlock);
+	public Level2(){
+		myObstacle = new Obstacle();
 	}
-	
-	public void updateBlocks(){
-		//step(time)
-		
-		myLeftBlock.setY(myLeftBlock.getY() - BLOCK_DIRECTION * 2 * BLOCK_SPEED * time);
-		myRightBlock.setY(myLeftBlock.getY() + BLOCK_DIRECTION * 2 * BLOCK_SPEED * time);
-		
-		if (myLeftBlock.getY() <=0 ){
-        	 BLOCK_DIRECTION *=-1;
-        }
-        
-        if (myLeftBlock.getY() >= Main.HEIGHT){
-        	 BLOCK_DIRECTION *=1;
-        }
-        
-        if (myRightBlock.getY() <=0 ){
-       	 BLOCK_DIRECTION *=1;
-       }
-       
-       if (myRightBlock.getY() >= Main.HEIGHT){
-       	 BLOCK_DIRECTION *=-1;
-       }
-  
+
+	/**
+	 * Creates Nodes needed in the Scene for Level 2
+	 */
+	@Override 
+	public Group createSceneNodes() {
+		addCommonNodes();
+		addLevel("LEVEL 2");
+		addInstructionToWin("Reach Iron Throne To Win");
+		myBlockList = myObstacle.createBlockNode(root);
+		return root;
 	}
-	
-	
-	public void checkCollision(){
-		if (myPlayer.getImageView().getBoundsInParent().intersects(myLeftBlock.getBoundsInParent())){
-			myPlayer.getImageView().setVisible(false);
-			//End the game	
-			System.out.println(" YOU LOST");
+
+	/**
+	 * Updates the Step function needed for Level 2
+	 */
+
+	@Override
+	public boolean updateLevel() {
+		stepHelper();
+		updateBlockPosition();
+		checkPlayerBlockCollision();
+		if(checkPlayerThroneCollision()){ wonGame();}
+		if (startExitScreen) {
+			exitButton.setOnAction(e -> Main.exitGame());
 		}
-		
-		// Check Game Won
-		if (myPlayer.getImageView().getBoundsInParent().intersects(myIronThrone.getBoundsInParent())){
-			// Game Won
-			System.out.println(" YOU WON");
-		}
-		
-		
-        
+		return false;
 	}
 
+	private boolean checkPlayerBlockCollision() {
+		for (Obstacle tempObstacle : myBlockList) {
+			if (myPlayer.getImageView().getBoundsInParent().intersects(tempObstacle.getImageView().getBoundsInParent())) {
+				myPlayer.getImageView().setVisible(false);
+				mySnowBall.getImageView().setVisible(false);
+				myPlayer.setDead(true);
+				myScoreBoard.updateLives();
+				displayScoreBoard(true);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void updateBlockPosition() {
+		for (int i=0;i< myBlockList.size();i++) {
+			myBlockList.get(i).getImageView().setY(
+					myBlockList.get(i).getImageView().getY() - i*BLOCK_DIRECTION
+					* Math.random()* BLOCK_SPEED * Game.SECOND_DELAY);
+			
+			if (myBlockList.get(i).getImageView().getY() <= 0) {
+				BLOCK_DIRECTION *= -1;
+			}
+
+			if (myBlockList.get(i).getImageView().getY() >= Game.HEIGHT) {
+				BLOCK_DIRECTION *= -1;
+			}
+		}
+	}
+
+	private void wonGame() {
+		myPlayer.setWonGame(true);
+		updateSplashScreen("YOU WON THE GAME");
+		displayScoreBoard(true);
+		addExitButton();
+		startExitScreen= true;
+	}
+	
 }

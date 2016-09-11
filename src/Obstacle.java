@@ -5,6 +5,12 @@ import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+/**
+ * Obstacle Class for creating Blocks in Level 2 
+ * Dependencies: Block.gif, 
+ * @author Pratiksha Sharma
+ * 
+ */
 public class Obstacle {
 	private ImageView myBlock;
 	private Obstacle obstacle;
@@ -17,7 +23,7 @@ public class Obstacle {
 	/**
 	 * Creates and returns blocks in Level2
 	 * @param myRoot
-	 * @return
+	 * @return List of the Blocks added to the root of the scene
 	 */
 	public List<Obstacle> createBlockNode(Group myRoot) {
 		for (int i = 0; i < 5; i++) {

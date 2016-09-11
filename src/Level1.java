@@ -1,10 +1,18 @@
 import javafx.scene.Group;
 
-public class Level1 extends Level {
+/**
+ * Separates functions needed in Level 1 in the game
+ * Dependencies: LevelController Super Class 
+ * Assumption: Assumes createSceneNodes() and updateLevel() abstract methods created in Level Clas 
+ *@author Pratiksha Sharma
+ */
 
+public class Level1 extends LevelController {
 	/**
-	 * Creates Nodes needed in the Scene for Level 1
+	 * Creates nodes needed in the Scene for Level 1
+	 * @return root-  root for the Scene for Level1
 	 */
+
 	@Override
 	public Group createSceneNodes() {
 		addCommonNodes();
@@ -15,17 +23,16 @@ public class Level1 extends Level {
 
 	/**
 	 * Updates the Step function needed for Level 1
+	 * @return boolean whether to update level or not- returns true if level1 completed
 	 */
 	@Override
 	public boolean updateLevel() {
 		stepHelper();
-		if ((myPlayer.getImageView().getX() >= Game.WIDTH / 2)
-				&& (myScoreBoard.getDeadWhiteWalkerCount() < 8)
-				&& (addEnemiesTwice)) {
+		if ( (myScoreBoard.getDeadWhiteWalkerCount() < 8 && (System.currentTimeMillis() % 1950 ==0))) {
 			addEnemiesTwice = false;
 			addEnemies();
 		}
-		if ((myScoreBoard.getDeadWhiteWalkerCount() >= 7)
+		if ((myScoreBoard.getDeadWhiteWalkerCount() >= 8)
 				&& checkPlayerThroneCollision()) {
 			playMusic("GOT.mp3");
 			return true;

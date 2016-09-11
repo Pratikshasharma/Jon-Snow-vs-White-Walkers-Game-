@@ -4,6 +4,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
+/**
+ * Create ScoreBoard Object with attributes totalScore,deadWhiteWalkerCount,etc
+ * @author Pratiksha Sharma
+ *
+ */
 public class ScoreBoard {
 	private int totalScore;
 	private int deadWhiteWalkerCount;
@@ -71,6 +76,7 @@ public class ScoreBoard {
 
 	/**
 	 * Creates text Object with the parameters passed
+	 * @return text Object 
 	 */
 
 	public Text createTextObject(String myString,double xPosition, double yPosition,int fontSize, Color myColor){
