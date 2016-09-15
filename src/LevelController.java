@@ -1,7 +1,7 @@
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -12,25 +12,34 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
-/**
- * 
- * Super-Class: Contains all common features needed in both Level 1 and Level 2 Class
- * Assumption: Assumes there are the following classes: Player, Enemy,ScoreBoard and SnowBall 
- * Dependencies: Depends on the the Assumed Classes above,Static constants defined in Game Class(Width, Height, etc)
- * Background.gif, jonOnThronegif, Replay.m4a,HIT.mp3
+// This entire file is a part of my masterpiece
+// Pratiksha Sharma
+
+/**This class contains the common behaviors in both Level 1 and level 2. It contains functions to create different nodes in the Scene
+ *root and common conditions that need to be checked in both levels. 
+ *This is a good piece of code, because it is an abstract super class that can be inherited in Level classes. Extending the game to more than
+ *2 levels becomes much easier because of this super class. The abstract methods- updateLevel() and createsceneNodes() leaves the implementation up
+ *to the Level classes that inherit this class. 
+ *However, this class does too many things at the moment. It could have been made much better by dividing it to control static and dynamic
+ *objects separately in the Scene.
+ *
  * @author Pratiksha Sharma
  */
 public abstract class LevelController {
 	private ImageView backgroundImage;
-	private ImageView myIronThrone;
+	protected ImageView myIronThrone;
 	private Enemy myEnemy;
 	private boolean shootBall;
 	private Collection<Enemy> myEnemyList = new ArrayList<Enemy>();
 	public static final double BALL_SPEED = 800;
 	public static final int PLAYER_SPEED = 30;
+	private static final int ENEMY_COUNT = 15;
 	public static final double ENEMY_SPEED = 30;
+	private static final String THRONE_IMAGE_FILE = "throne.gif";
+	private static final String HIT_MUSIC_FILE = "HIT.mp3";
+	private static final String REPLAY_MUSIC_FILE = "Replay.m4a";
+	private static final String GAME_OVER_MUSIC_FILE = "Death.mp3"; 
 	protected Button exitButton;
-
 	protected Player myPlayer;
 	protected ScoreBoard myScoreBoard;
 	protected boolean startExitScreen;
@@ -58,24 +67,20 @@ public abstract class LevelController {
 	}
 
 	private void addPlayer() {
-		myPlayer.setPlayerPosition();
+		myPlayer.setPlayerPosition(50, Game.HEIGHT-250);
 		root.getChildren().add(myPlayer.getImageView());
 	}
 
 	/**
 	 * Adds enemies to the Scene Root node.
 	 */
-
 	protected void addEnemies() {
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < ENEMY_COUNT; i++) {
 			myEnemy = new Enemy();
-			double minWidth = 0.8 * Game.WIDTH;
-			double tempWidth = Math.random() * (Game.WIDTH - minWidth)
-					+ minWidth;
+			double tempWidth = Math.random() * (Game.WIDTH - (0.8*Game.WIDTH)) + (0.8*Game.WIDTH);
 			myEnemy.spwanEnemy(tempWidth, Game.HEIGHT - i * 60);
-			if (myEnemy.getImageView().getX() < Game.WIDTH
-					&& myEnemy.getImageView().getY() >= 0
-					&& myEnemy.getImageView().getY() + 100 <= Game.HEIGHT) {
+			myEnemy.spwanEnemy(tempWidth, Game.HEIGHT - i * 60);
+			if(!checkOutOfBounds(myEnemy.getImageView().getX(),myEnemy.getImageView().getY()+ myEnemy.getImageView().getFitHeight())){		
 				root.getChildren().add(myEnemy.getImageView());
 				myEnemyList.add(myEnemy);
 			}
@@ -84,18 +89,14 @@ public abstract class LevelController {
 
 	private void addBall() {
 		mySnowBall = new SnowBall();
-		mySnowBall.setSnowBallPosition(myPlayer.getImageView().getX(), myPlayer
-				.getImageView().getY());
+		mySnowBall.setSnowBallPosition((myPlayer.getImageView().getX() + 0.4*myPlayer.getImageView().getBoundsInLocal().getWidth()) , (myPlayer.getImageView().getY() + 0.5*myPlayer.getImageView().getBoundsInLocal().getHeight()));
 		root.getChildren().add(mySnowBall.getImageView());
 	}
 
 	private void addIronThrone() {
-		myIronThrone = new ImageView(new Image(getClass().getClassLoader()
-				.getResourceAsStream("Throne.gif")));
-		myIronThrone.setX(Game.WIDTH
-				- myIronThrone.getBoundsInLocal().getWidth() - 10);
-		myIronThrone.setY(Game.HEIGHT / 2
-				- myIronThrone.getBoundsInLocal().getHeight());
+		myIronThrone = new ImageView(new Image(getClass().getClassLoader().getResourceAsStream(THRONE_IMAGE_FILE)));
+		myIronThrone.setX(Game.WIDTH - myIronThrone.getBoundsInLocal().getWidth() - 10);
+		myIronThrone.setY(Game.HEIGHT / 2 - myIronThrone.getBoundsInLocal().getHeight());
 		root.getChildren().add(myIronThrone);
 	}
 
@@ -115,25 +116,27 @@ public abstract class LevelController {
 	 * Checks if the enemy is dead, the player is dead, or the player has run
 	 * out of lives. Updates and Displays Scoreboard
 	 */
-
 	public void stepHelper() {
 		for (Enemy tempEnemy : myEnemyList) {
-			tempEnemy.getImageView().setX(
-					tempEnemy.getImageView().getX() - 1 * 2 * ENEMY_SPEED
-					* Game.SECOND_DELAY);
-			if (checkBallEnemyCollision(tempEnemy)) {
-				myEnemyList.remove(tempEnemy);
-				playMusic("HIT.mp3");
+			tempEnemy.getImageView().setX(tempEnemy.getImageView().getX() -  2 * ENEMY_SPEED* Game.SECOND_DELAY);
+			if ((!tempEnemy.isDead()) && checkCollision(tempEnemy.getImageView().getBoundsInParent(),mySnowBall.getImageView().getBoundsInParent())) {
+				playMusic(HIT_MUSIC_FILE);
+				myScoreBoard.updateScoreBoard();
+				removeDeadEnemyFromScreen(tempEnemy);
+				addBall();
 				displayScoreBoard(true);
 				break;
 			}
 
-			if (checkEnemyPlayerCollision(tempEnemy)) {
+			if ((!myPlayer.isDead()) && (!tempEnemy.isDead()) && checkCollision(tempEnemy.getImageView().getBoundsInParent(),myPlayer.getImageView().getBoundsInParent())) {
+				myPlayer.setDead(true);
+				myPlayer.getImageView().setVisible(false);
+				mySnowBall.getImageView().setVisible(false);
+				myScoreBoard.updateLives();
 				displayScoreBoard(true);
 				break;
 			}
 			if (shootBall) {
-
 				mySnowBall.moveBall();
 				if (mySnowBall.getImageView().getX() >= Game.WIDTH) {
 					addBall();
@@ -143,14 +146,13 @@ public abstract class LevelController {
 		}
 
 		if (myPlayer.isDead()) {
-			playMusic("Replay.m4a");
 			if (myScoreBoard.getLives() > 0) {
+				playMusic(REPLAY_MUSIC_FILE);
 				myPlayer.setDead(false);
-				myPlayer.setPlayerPosition();
-				mySnowBall.setSnowBallPosition(myPlayer.getImageView().getX(),
-						myPlayer.getImageView().getY());
+				myPlayer.setPlayerPosition(50, Game.HEIGHT-250);
+				addBall();
 			} else if (!startExitScreen) {
-				playMusic("Death.mp3");
+				playMusic(GAME_OVER_MUSIC_FILE);
 				updateSplashScreen("You Lost.");
 				addExitButton();
 				startExitScreen = true;
@@ -164,54 +166,41 @@ public abstract class LevelController {
 	/**
 	 * Controls what to do each time a key is pressed
 	 */
-
 	protected void handleKeyInput(KeyCode code) {
 		switch (code) {
 		case SPACE:
 			shootBall = true;
 			break;
 		case RIGHT:
-			if (myPlayer.getImageView().getX() <= Game.WIDTH
-			- myPlayer.getImageView().getBoundsInLocal().getWidth()) {
-				myPlayer.getImageView().setX(
-						myPlayer.getImageView().getX() + PLAYER_SPEED);
-				mySnowBall.getImageView().setX(
-						mySnowBall.getImageView().getX() + PLAYER_SPEED);		
+			if (myPlayer.getImageView().getX() <= Game.WIDTH - myPlayer.getImageView().getBoundsInLocal().getWidth()) {
+				myPlayer.getImageView().setX(myPlayer.getImageView().getX() + PLAYER_SPEED);
+				mySnowBall.getImageView().setX(mySnowBall.getImageView().getX() + PLAYER_SPEED);		
 			}
 			break;
 
 		case LEFT:
 			if (myPlayer.getImageView().getX() > 0) {
-				myPlayer.getImageView().setX(
-						myPlayer.getImageView().getX() - PLAYER_SPEED);
-				mySnowBall.getImageView().setX(
-						mySnowBall.getImageView().getX() - PLAYER_SPEED);	
+				myPlayer.getImageView().setX(myPlayer.getImageView().getX() - PLAYER_SPEED);
+				mySnowBall.getImageView().setX(mySnowBall.getImageView().getX() - PLAYER_SPEED);	
 			}
 			break;
 		case UP:
 			if (myPlayer.getImageView().getY() > 0) {
-				myPlayer.getImageView().setY(
-						myPlayer.getImageView().getY() - PLAYER_SPEED);
-				mySnowBall.getImageView().setY(
-						mySnowBall.getImageView().getY() - PLAYER_SPEED);
+				myPlayer.getImageView().setY(myPlayer.getImageView().getY() - PLAYER_SPEED);
+				mySnowBall.getImageView().setY(mySnowBall.getImageView().getY() - PLAYER_SPEED);
 			}
 			break;
 		case DOWN:
-			if (myPlayer.getImageView().getY() <= Game.HEIGHT
-			- myPlayer.getImageView().getBoundsInLocal().getHeight()
-			- 80) {
-				myPlayer.getImageView().setY(
-						myPlayer.getImageView().getY() + PLAYER_SPEED);
-				mySnowBall.getImageView().setY(
-						mySnowBall.getImageView().getY() + PLAYER_SPEED);
-
+			if (myPlayer.getImageView().getY() <= Game.HEIGHT- myPlayer.getImageView().getBoundsInLocal().getHeight()- 80) {
+				myPlayer.getImageView().setY(myPlayer.getImageView().getY() + PLAYER_SPEED);
+				mySnowBall.getImageView().setY(mySnowBall.getImageView().getY() + PLAYER_SPEED);
 			}
 			break;
 
 		case C:
 			for (Enemy myCheatEnemy : myEnemyList) {
-				playMusic("HIT.mp3");
 				removeDeadEnemyFromScreen(myCheatEnemy);
+				playMusic(HIT_MUSIC_FILE);
 				myScoreBoard.updateScoreBoard();
 				displayScoreBoard(true);
 				myEnemyList.remove(myCheatEnemy);
@@ -225,39 +214,30 @@ public abstract class LevelController {
 
 	/**
 	 * Displays the Scoreboard
-	 * @param deleteScoreBoardNodes
-	 *            boolean to delete ScoreBoard nodes if already in the root
+	 * @param deleteScoreBoardNodes boolean to reset ScoreBoard nodes if already in the root  
 	 */
 
-	protected void displayScoreBoard(boolean deleteScoreBoardNodes) {
-		if (deleteScoreBoardNodes) {
-			updateScoreBoardNodes();
+	protected void displayScoreBoard(boolean updateScoreBoardNodes) {
+		if(!updateScoreBoardNodes){
+			root.getChildren().add(myScoreBoard.getScoreText());
+			root.getChildren().add(myScoreBoard.getDeadWhiteWalkersText());
+			root.getChildren().add(myScoreBoard.getLivesText());
 		}
-		root.getChildren().add(myScoreBoard.getScoreText());
-		root.getChildren().add(myScoreBoard.getDeadWhiteWalkersText());
-		root.getChildren().add(myScoreBoard.getLivesText());
+		myScoreBoard.setScoreText(myScoreBoard.getScoreText());
+		myScoreBoard.setLivesText(myScoreBoard.getLivesText());
+		myScoreBoard.setWhiteWalkerCoundText(myScoreBoard.getDeadWhiteWalkersText());		
 	}
 
-	private void updateScoreBoardNodes() {
-		root.getChildren().remove(myScoreBoard.getLivesText());
-		root.getChildren().remove(myScoreBoard.getDeadWhiteWalkersText());
-		root.getChildren().remove(myScoreBoard.getScoreText());
-	}
 
 	/**
 	 * Updates the Splash Screen once Level is Lost, or Game is Won
-	 * 
-	 * @param myString
-	 *            text to be displayed in the Splash Screen at the end of the
-	 *            Level
+	 * @param myString text to be displayed in the Splash Screen at the end of the Level
 	 */
 
 	protected void updateSplashScreen(String myString) {
 		root.getChildren().clear();
-		ImageView jonOnThrone = new ImageView(new Image(getClass()
-				.getClassLoader().getResourceAsStream("JonOnThrone.gif")));
-		Text gameOverText = myScoreBoard.createTextObject(myString,
-				0.5 * Game.WIDTH, 0.5 * Game.HEIGHT, 40, Color.RED);
+		ImageView jonOnThrone = new ImageView(new Image(getClass().getClassLoader().getResourceAsStream("JonOnThrone.gif")));
+		Text gameOverText = myScoreBoard.createTextObject(myString,0.5 * Game.WIDTH, 0.5 * Game.HEIGHT, 40, Color.RED);
 		root.getChildren().add(jonOnThrone);
 		root.getChildren().add(gameOverText);
 		displayScoreBoard(true);
@@ -266,7 +246,6 @@ public abstract class LevelController {
 	/**
 	 * Adds exitButton in splash Screen
 	 */
-
 	protected void addExitButton() {
 		exitButton = new Button("EXIT GAME");
 		exitButton.setLayoutX(0.5 * Game.WIDTH);
@@ -276,64 +255,30 @@ public abstract class LevelController {
 
 	private void removeDeadEnemyFromScreen(Enemy deadEnemy) {
 		deadEnemy.setDead(true);
+		myEnemyList.remove(deadEnemy);
 		deadEnemy.getImageView().setVisible(false);
 		mySnowBall.getImageView().setVisible(false);
-		myEnemyList.remove(deadEnemy);
-		addBall();
 	}
 
 	private void addBackgroundImage() {
-		backgroundImage = new ImageView(new Image(
-				getClass().getResourceAsStream("Background.gif")));
+		backgroundImage = new ImageView(new Image(getClass().getResourceAsStream("Background.gif")));
 		root.getChildren().add(backgroundImage);
 	}
 
 	protected void addInstructionToWin(String myString) {
-		Text myText = myScoreBoard.createTextObject(myString, 40, 30, 15,
-				Color.BLUE);
+		Text myText = myScoreBoard.createTextObject(myString, 40, 30, 15,Color.BLUE);
 		root.getChildren().add(myText);
 	}
 
 	protected void addLevel(String myLevel) {
-		Text myText = myScoreBoard.createTextObject(myLevel, Game.WIDTH / 2,
-				20, 20, Color.CRIMSON);
+		Text myText = myScoreBoard.createTextObject(myLevel, Game.WIDTH / 2,20, 20, Color.CRIMSON);
 		root.getChildren().add(myText);
-	}
-
-	private boolean checkBallEnemyCollision(Enemy myTempEnemy) {
-		if ((!myTempEnemy.isDead())
-				&& (myTempEnemy.getImageView().getBoundsInParent().intersects(mySnowBall.getImageView().getBoundsInParent()))) {
-			removeDeadEnemyFromScreen(myTempEnemy);
-			myScoreBoard.updateScoreBoard();
-			mySnowBall.getImageView().setVisible(false);
-
-			return true;
-		}
-		return false;
-	}
-
-	private boolean checkEnemyPlayerCollision(Enemy myTempEnemy) {
-		if ((!myTempEnemy.isDead())
-				&& (!myPlayer.isDead())
-				&& myTempEnemy
-				.getImageView()
-				.getBoundsInParent()
-				.intersects(myPlayer.getImageView().getBoundsInParent())) {
-			myPlayer.setDead(true);
-			myPlayer.getImageView().setVisible(false);
-			mySnowBall.getImageView().setVisible(false);
-			myScoreBoard.updateLives();
-			return true;
-		}
-		return false;
 	}
 
 	/**
 	 * Plays the music file sent as a String
-	 * 
 	 * @param myFile name of the file of music to be played
 	 */
-
 	protected void playMusic(String myFile) {
 		File newfile = new File(myFile);
 		if (newfile.exists()){
@@ -347,8 +292,13 @@ public abstract class LevelController {
 	 * Checks if Player Completed the Level by reaching the throne
 	 * @return returns boolean if player completed Level
 	 */
-	protected boolean checkPlayerThroneCollision() {
-		return (myPlayer.getImageView().getBoundsInParent()
-				.intersects(myIronThrone.getBoundsInParent()));
+	protected boolean checkCollision( Bounds myBound1, Bounds myBound2 ) {
+		return (myBound1.intersects(myBound2));
+	}
+	protected boolean checkOutOfBounds(double xPosition, double yPosition){
+		if (xPosition >= Game.WIDTH || xPosition <=0 || yPosition >=Game.HEIGHT || yPosition<=0 ){
+			return true;
+		}
+		return false;	
 	}
 }
