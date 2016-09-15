@@ -33,7 +33,8 @@ public class Level1 extends LevelController {
 			addEnemies();
 		}
 		if ((myScoreBoard.getDeadWhiteWalkerCount() >= 8)
-				&& checkPlayerThroneCollision()) {
+				// if checkthronePlayerCollision()
+				&& checkCollision(myPlayer.getImageView().getBoundsInParent(),myIronThrone.getBoundsInParent())) {
 			playMusic("GOT.mp3");
 			return true;
 		}

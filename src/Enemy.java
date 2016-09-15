@@ -1,5 +1,4 @@
 
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 /**
@@ -8,12 +7,14 @@ import javafx.scene.image.ImageView;
  * @author Pratiksha Sharma
  */
 
-public class Enemy {
+public class Enemy extends Sprite{
 	private ImageView enemy;
 	private boolean dead;
+	private static final String ENEMY_IMAGE_FILE = "Enemy.gif";
 	
 	public Enemy(){
-		this.enemy = new ImageView(new Image(getClass().getClassLoader().getResourceAsStream("Enemy.gif")));	
+		super(ENEMY_IMAGE_FILE);
+		this.enemy = super.getMySprite();
 		this.dead = false;
 	}
 	
@@ -30,7 +31,6 @@ public class Enemy {
 	}
 	
 	public void spwanEnemy(double xPosition, double yPosition){
-		enemy.setX(xPosition);
-		enemy.setY(yPosition);
+		super.setPosition(xPosition, yPosition);
 }
 }

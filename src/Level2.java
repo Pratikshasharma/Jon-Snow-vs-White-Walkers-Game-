@@ -41,7 +41,9 @@ public class Level2 extends LevelController {
 		stepHelper();
 		updateBlockPosition();
 		checkPlayerBlockCollision();
-		if(checkPlayerThroneCollision()){ wonGame();}
+		// if checkPlayerthroneCollision();
+		if(checkCollision(myPlayer.getImageView().getBoundsInParent(),myIronThrone.getBoundsInParent()))
+		{wonGame();};
 		if (startExitScreen) {
 			exitButton.setOnAction(e -> Main.exitGame());
 		}
