@@ -77,12 +77,10 @@ on the Level of the game. For example, blocks need to be added to the root of th
 This makes keeps the code cleaner and more readable. Also, there is no point in adding functions in a super class that one or two of
 the subclasses might not use.
 
-I chose not to make Sprite class but separate Enemy, Player and SnowBall classes, because these objects do not share any behaviors in common.
-The setup of Enemy, Player and SnowBall classes are similar (all of them contain ImageView attributes) and thus might
-seem like duplication of code, however, they all have ImageView attributes created from different images. 
+Sprite() Super class:
+Sprite Super class is extended in Enemy, Player and SnowBall Classes, which are the ImageView objects in the scene.
+ 
 
-I could have made a Sprite class but in order to create an ImageView, I would have to pass in the image file names from
-each Player, Enemy and SnowBall class.
 Even though it is a bad design, I have lots of conditional statements in my stepHelper method for both levels. 
 
 All of the instance variables in the classes (except for theLevelController super class) are made private. 
