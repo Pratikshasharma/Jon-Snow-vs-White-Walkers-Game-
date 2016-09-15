@@ -1,5 +1,4 @@
 
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 /**
@@ -8,24 +7,24 @@ import javafx.scene.image.ImageView;
  * @author Pratiksha Sharma
  *
  */
-public class Player {
+public class Player extends Sprite {
 	private ImageView playerImageView;
 	private boolean dead;
 	private boolean wonGame;
+	private static final String PLAYER_IMAGE_FILE = "Player.gif";
 
 	public Player(){
-		playerImageView = new ImageView(new Image(getClass().getClassLoader().getResourceAsStream("Player.gif")));	
-		dead = false;
-		wonGame = false;
+		super(PLAYER_IMAGE_FILE);
+		this.playerImageView = 	super.getMySprite();
+		this.dead = false;
+		this.wonGame = false;
 	}
 
 	/**
 	 * Sets Player to the initial position in the Scene and 
 	 */
-	public void setPlayerPosition(){
-		playerImageView.setVisible(true);
-		playerImageView.setX(50);
-		playerImageView.setY(Game.HEIGHT-250);	
+	public void setPlayerPosition(double width, double height){	
+		super.setPosition(width,height);	
 	}
 
 	public ImageView getImageView(){

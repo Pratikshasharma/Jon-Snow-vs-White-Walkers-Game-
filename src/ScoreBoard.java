@@ -73,6 +73,19 @@ public class ScoreBoard {
 	public int getDeadWhiteWalkerCount(){
 		return deadWhiteWalkerCount;
 	}
+	
+	public void setScoreText(Text myScoreText){
+		this.scoreDisplayText = myScoreText;
+	}
+	
+	
+	public void setWhiteWalkerCoundText(Text myWhiteWalkerCountText){
+		this.whiteWalkersDisplayText = myWhiteWalkerCountText;
+	}
+	public void setLivesText(Text myLivesText){
+		this.livesText = myLivesText;
+	}
+	
 
 	/**
 	 * Creates text Object with the parameters passed

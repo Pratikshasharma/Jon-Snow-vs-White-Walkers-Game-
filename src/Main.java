@@ -20,7 +20,6 @@ public class Main extends Application {
 	 */	
 	@Override
 	public void start (Stage stage) {
-		// create your own game here
 		myGame = new Game();
 		stage.setTitle(myGame.getTitle());    
 		Scene scene = myGame.init();

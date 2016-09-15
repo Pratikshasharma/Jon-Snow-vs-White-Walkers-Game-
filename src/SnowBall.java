@@ -1,4 +1,3 @@
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 /**
@@ -7,12 +6,14 @@ import javafx.scene.image.ImageView;
  * @author Pratiksha Sharma
  *
  */
-public class SnowBall {
+public class SnowBall extends Sprite {
 	private ImageView snowBall;
 	Player player = new Player();
+	private static final String BALL_IMAGE_FILE = "Ball.gif";
 
 	public SnowBall(){
-		snowBall = new ImageView(new Image(getClass().getClassLoader().getResourceAsStream("Ball.gif")));	
+		super(BALL_IMAGE_FILE);
+		this.snowBall = super.getMySprite();
 	}
 
 	/**
@@ -21,9 +22,8 @@ public class SnowBall {
 	 * @param height
 	 */
 	public void setSnowBallPosition(double width, double height){
-		snowBall.setX(width + 0.4*player.getImageView().getBoundsInLocal().getWidth());
-		snowBall.setY(height + 0.5*player.getImageView().getBoundsInLocal().getHeight());
-		snowBall.setVisible(true);
+		//super.setPosition(width + 0.4*player.getImageView().getBoundsInLocal().getWidth(), height + 0.5*player.getImageView().getBoundsInLocal().getHeight());
+	super.setPosition(width, height);
 	}
 
 	public ImageView getImageView(){
@@ -36,6 +36,5 @@ public class SnowBall {
 	public void moveBall(){
 		snowBall.setX(snowBall.getX() +  LevelController.BALL_SPEED * Game.SECOND_DELAY);
 	}
-
 }
 
